@@ -1,0 +1,48 @@
+version: '3'
+services:
+    postgres:
+        image: 'postgres:alpine'
+        environment:
+            - 'POSTGRES_USER=postgres'
+            - 'POSTGRES_PASSWORD=pg_pwd_123'
+    redis:
+        image: 'redis:alpine'
+    nginx:
+        build:
+            context: './nginx'
+#            dockerfile: 'Dockerfile.dev'
+        restart: always
+        ports:
+            - '80:80'
+    api:
+        build:
+            context: './server'
+#            dockerfile: 'Dockerfile.dev'
+        volumes:
+            - '/usr/app/node_modules'
+            - './server:/usr/app'
+        environment:
+            - 'REDIS_HOST=redis'
+            - 'REDIS_PORT=6379'
+            - 'PG_HOST=postgres'
+            - 'PG_PORT=5432'
+            - 'PG_DATABASE=postgres'
+            - 'PG_USER=postgres'
+            - 'PG_PASSWORD=pg_pwd_123'
+    worker:
+        build:
+            context: './worker'
+#            dockerfile: 'Dockerfile.dev'
+        volumes:
+            - '/usr/app/node_modules'
+            - './worker:/usr/app'
+        environment:
+            - 'REDIS_HOST=redis'
+            - 'REDIS_PORT=6379'
+    client:
+        build:
+            context: './client'
+#            dockerfile: 'Dockerfile.dev'
+        volumes:
+            - '/usr/app/node_modules'
+            - './client:/usr/app'
