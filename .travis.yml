@@ -18,3 +18,4 @@ after_success:
     - docker push tasso85/fibonacci-server
     - docker push tasso85/fibonacci-nginx
     - docker push tasso85/fibonacci-worker
+    - docker logout
